@@ -15,7 +15,8 @@ The repository contain:
 4. The python code to reproduce the main test from [1]: test_extra_n.py and plot_extra_n.py
 5. The data to reproduce the abovementioned test: measures (with a smaller version for test measures_small)
 
-The source global.f90 is only used to define the global precision for w2extrapolation.f90, single (for faster computation) or double. This can be easily changed but require then to recompile the fortran source code via the following command
-f2py --fcompiler=gfortran -c global.f90 w2extrapolation.f90 -m w2extrapolation               
-(requires installation of [f2py](https://numpy.org/doc/stable/f2py/))
+The source global.f90 is only used to define the global precision for w2extrapolation.f90, single (for faster computation) or double. This can be easily changed but require then to recompile the fortran source code via the following command (requires installation of [f2py](https://numpy.org/doc/stable/f2py/))
+
+f2py --fcompiler=gfortran -c global.f90 w2extrapolation.f90 -m w2extrapolation
+
 
