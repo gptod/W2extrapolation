@@ -21,7 +21,7 @@ python3 -m numpy.f2py --fcompiler=* -c global.f90 w2extrapolation.f90 -m w2extra
 
 where * is the fortran compiler to be used (e.g. gfortran).
 
-The source global.f90 is only used to define the global precision for w2extrapolation.f90, single (for faster computation) or double. This can be easily changed but require then to recompile the fortran source code.
+The source global.f90 is only used to define the global precision for w2extrapolation.f90, single (for faster computation) or double. This can be easily changed but requires then to recompile the fortran source code.
 
 To redo the simulation from figure (2) in [1], run
 
