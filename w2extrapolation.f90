@@ -50,7 +50,8 @@ subroutine extra_fortran(n,m,d,mu,nu,X,Y,f0,Z0,t,eps,itmax,tol,tau,verb,f,g,Z,P,
         obj(i)=-sum(f*mu)-sum(g*nu)+eps*sum(P)+sum(nu*sum((Z-Y)**2,2))/(2*(t-1))
         
         if (verb==1) then
-            write(*,'(A6,I6,2X,A13,E12.6,2X,A13,E12.6,2X,A11,E11.4)') 'Iter: ', i, 'Error marg.: ', errP(i), 'Error grad.: ', errG(i), 'Objective: ', obj(i)
+            write(*,'(A6,I6,2X,A13,E12.6,2X,A13,E12.6,2X,A11,E11.4)') &
+            'Iter: ', i, 'Error marg.: ', errP(i), 'Error grad.: ', errG(i), 'Objective: ', obj(i)
         end if
         
         if (max(errP(i),errG(i))<tol) then
