@@ -4,12 +4,14 @@ import w2extrapolation
 def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=1,verb=0):
 
     # input:
-    # nu0 -> initial measure; tuple containing two numpy arrays, X the particles' positions of size (n,d) and mu the weights of size d
+    # nu0 -> initial measure; tuple containing two numpy arrays, X the particles' positions of size (n,d) and mu the weights of size n
     # nu1 -> final measure; same structure of nu0
     # f0 -> initial value for the potential f; numpy array of size n
-    # Z0 -> initial value for the extrapolation's particle positions; numpy array of size (m,d)
+    # Z0 -> initial value for the extrapolation's particle positions; numpy array of size (m,d), m corresponding to the number of 
+    #       particles of nu1 
     # t -> time of the extrapolation
     # eps -> temperature parameter in the Entropic regularization approach
+    # deb -> logical; True (add debiasing term) or False (no debiasing)
     # itmax -> maximum number of iterations for the SISTA algorithm
     # tol -> tolerance for the error
     # tau -> stepsize for the gradient descent step in the SISTA algorithm
@@ -17,16 +19,13 @@ def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=1,verb=0):
 
     # output: 
     # f, g -> optimal potentials; numpy arrays of size respextively n and m
-    # mu -> extrapolated discrete measure
-    # P -> optimal plan in the weak optimal transport barycentric formulation
-    # nu0bar -> discrete measure in convex order with nu0
+    # mu -> extrapolated discrete measure in the form (Z,b), with Z numpy array of size (m,d) corresponding to particles' position 
+    #       and b numpy array of size m corresponding to the weights (which coincides with those of the measure nu1)
+    # P -> optimal plan in the weak optimal transport barycentric formulation; numpy array of dimension (n,m)
+    # nu0bar -> discrete measure in convex order with nu0, with the same form of mu
     # niter -> number of iterations
     # errP, errG -> arrays of iterations' errors on the marginal condition on the plan P and on the norm of the gradient
     # obj -> array of iterations' objective values
-
-    # The extrapolation is provided as the tuple mu=(Z,b), where Z is the computed array of particles' position and
-    # b is the array of weights (which coincides with those of the measure nu1). The measure nu0bar is provided as well
-    # as a tuple of particles positions and weights. 
     
     X,a=nu0[0],nu0[1]
     Y,b=nu1[0],nu1[1]
@@ -43,6 +42,32 @@ def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=1,verb=0):
     return f, g, mu, P, nu0bar, niter, errP, errG, obj
 
 def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=1,verb=0):
+
+    # input:
+    # num -> initial measures; tuple containing the N measures in the form of tuples (X,a), 
+    #        X numpy array of size (nk,d) corresponding to particles' positions and a numpy array of weights of size nk,
+    #        nk being the number of particles of the k-th measure in num, d the space dimension
+    # nup -> final measure; tuple of the same structure as those in num
+    # f0 -> initial value for the potential f; tuple of length len(num) of numpy arrays of size nk
+    # Z0 -> initial value for the extrapolation's particle positions; numpy array of size (m,d), m corresponding to the number of 
+    #       particles of nup
+    # t -> time of the extrapolation
+    # eps -> temperature parameter in the Entropic regularization approach
+    # deb -> logical; True (add debiasing term) or False (no debiasing)
+    # itmax -> maximum number of iterations for the SISTA algorithm
+    # tol -> tolerance for the error
+    # tau -> stepsize for the gradient descent step in the SISTA algorithm
+    # verb -> verbosity level: 0 no output, 1 print iterations' details
+
+    # output: 
+    # f, g -> optimal potentials; tuple of length len(num) of numpy arrays of size respextively nk and m
+    # mu -> extrapolated discrete measure in the form (Z,b), with Z numpy array of size (m,d) corresponding to particles' position 
+    #       and b numpy array of size m corresponding to the weights (which coincides with those of the measure nu1)
+    # P -> ptimal plan in the weak optimal transport barycentric formulation; tuple of length len(num) of numpy arrays of dimension (nk,m)
+    # nu0bar -> discrete measure in convex order with nu0, with the same form of mu
+    # niter -> number of iterations
+    # errP, errG -> arrays of iterations' errors on the marginal condition on the plan P and on the norm of the gradient
+    # obj -> array of iterations' objective values
 
     Nm=len(num)
     X=[num[k][0] for k in range(Nm)]
