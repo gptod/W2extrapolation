@@ -20,7 +20,7 @@ c1=np.array([1,0,0])
 a,b,c,d=(0,0,0,0)
 for couple in extrapolations:
     for time in extrapolations[couple]:
-        X=extrapolations[couple][time][0]
+        X=extrapolations[couple][time][0][0]
         a=min(a,min(X[:,0]))
         b=max(b,max(X[:,0]))
         c=min(c,min(X[:,1]))
@@ -38,7 +38,7 @@ for couple in extrapolations:
     ind=-1
     for time in extrapolations[couple]:
         ind+=1
-        X=extrapolations[couple][time][0]
+        X=extrapolations[couple][time][0][0]
         fig, ax = plt.subplots()
         ax.plot(X[:, 0], X[:, 1], 'or', markerfacecolor=col[ind,:], markersize=5, markeredgecolor=col[ind,:])
         ax.set_xlim(a, b)
