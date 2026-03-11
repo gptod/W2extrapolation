@@ -21,6 +21,7 @@ The repository contains:
 To compile the fortran code and build the python wrapper, use the following commands (requires installation of [f2py](https://numpy.org/doc/stable/f2py/))
 
 python3 -m numpy.f2py --fcompiler=* -c global.f90 ot_sinkhorn.f90 -m ot_sinkhorn
+
 python3 -m numpy.f2py --fcompiler=* -c global.f90 ot_sinkhorn.f90 w2extrapolation.f90 -m w2extrapolation
 
 where * is the fortran compiler to be used (e.g. gfortran).
