@@ -25,6 +25,10 @@ for couple in extrapolations:
         b=max(b,max(X[:,0]))
         c=min(c,min(X[:,1]))
         d=max(d,max(X[:,1]))
+a=a-0.05*(b-a)
+b=b+0.05*(b-a)
+c=c-0.05*(d-c)
+d=d+0.05*(d-c)
 
 for couple in extrapolations:
     

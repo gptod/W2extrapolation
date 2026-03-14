@@ -9,7 +9,6 @@ dt=(T-1)/Nt
 d=2 # dimension
 
 eps=1e-3 # temperature value
-tau=5 # stepsize
 itmax=50000 # maximum number of iterations
 tol=5e-4 # stop tolerance
 
@@ -36,7 +35,7 @@ for i in range(1,Nt+1):
     if i==1:
         f0=np.ones(np.size(X,0))
         Z0=Y
-    f, g, mu, P, nu0bar, niter, errP, errG, obj =extra.extra((X,a),(Y,b),f0,Z0,t,eps,False,itmax,tol,tau,0)
+    f, g, mu, P, nu0bar, niter, errP, errG, obj =extra.extra((X,a),(Y,b),f0,Z0,t,eps=eps,deb=False,itmax=itmax,tol=tol,verb=0,bb=True)
 
     print('iterations:',niter,'err.marg.:',errP[niter-1],'err.grad.:',errG[niter-1])
     if max(errP[niter-1],errG[niter-1])>tol:

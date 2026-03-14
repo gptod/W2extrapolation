@@ -32,11 +32,9 @@ subroutine ote(n,m,mu,nu,C,f0,eps,itmax,tol,verb,f,g,P,niter,errP,obj)
     real(wp) :: norm_nu
     
 
-    do i=1,n
-        f(i)=f0(i)
-    end do
-    errP=0.0
-    obj=0.0
+    f=f0
+    errP=0.0_wp
+    obj=0.0_wp
     norm_nu=sqrt(sum(nu**2))
     niter=itmax
 
@@ -81,7 +79,7 @@ subroutine cost_l2(n,m,d,X,Z,C)
 
     do i=1,n
         do j=1,m
-            C(i,j)=0.5*sum((X(i,:)-Z(j,:))**2)
+            C(i,j)=0.5_wp*sum((X(i,:)-Z(j,:))**2)
         end do
     end do
 
@@ -106,7 +104,7 @@ subroutine cost_l1(n,m,d,X,Z,C)
 
     do i=1,n
         do j=1,m
-            C(i,j)=0.5*sqrt(sum((X(i,:)-Z(j,:))**2))
+            C(i,j)=0.5_wp*sqrt(sum((X(i,:)-Z(j,:))**2))
         end do
     end do
 
@@ -171,16 +169,16 @@ subroutine get_P(n,m,f,g,C,mu,nu,eps,P)
 
 end subroutine get_P
 
-subroutine gradient_deb_W2(m,d,nu,Z,fin_self,t,eps,itmax,tol,grad_self,fout_self,obj_self)
+subroutine gradient_deb_W2(m,d,nu,Z,fin_self,eps,itmax,tol,grad_self,fout_self,obj_self)
 
     implicit none
     
     integer, intent(in) :: m, d, itmax
     real(wp), intent(in) :: nu(m), Z(m,d), fin_self(m)
-    real(wp), intent(in) :: t, eps, tol
+    real(wp), intent(in) :: eps, tol
     !f2py intent(in) :: m, d, itmax
     !f2py intent(in) :: nu, Z, fin_self
-    !f2py intent(in) :: t, eps, tol
+    !f2py intent(in) :: eps, tol
     !f2py depend(m) :: nu, fin_self
     !f2py depend(m,d) :: Z
 
@@ -193,16 +191,15 @@ subroutine gradient_deb_W2(m,d,nu,Z,fin_self,t,eps,itmax,tol,grad_self,fout_self
     integer :: i, j, niter_self
     real(wp) :: v(d), C_self(m,m), P_self(m,m), errP_self
 
-    call cost_l2_self(m,d,Z,t,C_self)
+    call cost_l2_self(m,d,Z,C_self)
     call ote_self(m,nu,C_self,fin_self,eps,itmax,tol,0,fout_self,P_self,niter_self,errP_self,obj_self)
-    obj_self=0.5*obj_self
 
     do j=1,m
         v=0.0
         do i=1,m
             v=v+(Z(j,:)-Z(i,:))*P_self(i,j)
         end do
-        grad_self(j,:)=v/t
+        grad_self(j,:)=v
     end do
 
 end subroutine gradient_deb_W2
@@ -231,8 +228,8 @@ subroutine ote_self(n,mu,C,fin_self,eps,itmax,tol,verb,fout_self,P,niter_self,er
     real(wp) :: fnew(n), norm_mu
     
     fout_self=fin_self
-    errP_self=0.0
-    obj_self=0.0
+    errP_self=0.0_wp
+    obj_self=0.0_wp
     norm_mu=sqrt(sum(mu**2))
     niter_self=itmax
 
@@ -273,19 +270,19 @@ subroutine mina_stab_self(n,C,f,mu,eps,fnew)
     real(wp) :: v(n), minv
 
     do i=1,n
-        v = C(:,i) - f
-        minv = minval(v)
-        fnew(i) = -eps * log(sum(mu * exp(-(v-minv)/eps))) + minv
+        v=C(:,i)-f
+        minv=minval(v)
+        fnew(i)=-eps*log(sum(mu*exp(-(v-minv)/eps)))+minv
     end do
 
 end subroutine
 
-subroutine cost_l2_self(n,d,X,t,C)
+subroutine cost_l2_self(n,d,X,C)
     
     implicit none
 
     integer, intent(in) :: n, d
-    real(wp), intent(in) :: X(n,d), t
+    real(wp), intent(in) :: X(n,d)
     !f2py intent(in) :: n, d
     !f2py intent(in) :: X
     !f2py depend(n,d) :: X
@@ -297,7 +294,7 @@ subroutine cost_l2_self(n,d,X,t,C)
 
     do i=1,n
         do j=1,n
-            C(i,j)=0.5*sum((X(i,:)-X(j,:))**2)/t
+            C(i,j)=0.5_wp*sum((X(i,:)-X(j,:))**2)
         end do
     end do
 
@@ -315,8 +312,7 @@ subroutine get_P_self(n,f,C,mu,eps,P)
 
     do i=1,n
         do j=1,n
-            P(i,j) = mu(i) * mu(j) * &
-                     exp((f(i)+f(j)-C(i,j))/eps)
+            P(i,j)=mu(i)*exp((f(i)+f(j)-C(i,j))/eps)*mu(j)
         end do
     end do
 

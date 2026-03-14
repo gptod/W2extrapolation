@@ -43,7 +43,7 @@ for i in range(1,Nt+1):
     if i==1:
         f0=tuple([np.ones(num[k][0].shape[0]) for k in range(Nm)])
         Z0=nup[0]
-    f, g, mu, P, numbar, niter, errP, errG, obj =extra.extra_Nto1(num,nup,f0,Z0,t,lm,eps,False,itmax,tol,tau,1)
+    f, g, mu, P, numbar, niter, errP, errG, obj =extra.extra_Nto1(num,nup,f0,Z0,t,lm,eps=eps,deb=True,itmax=itmax,tol=tol,verb=0,bb=True)
 
     print('iterations:',niter,'err.marg.:',errP[niter-1],'err.grad.:',errG[niter-1])
     if max(errP[niter-1],errG[niter-1])>tol:
