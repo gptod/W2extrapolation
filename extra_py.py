@@ -34,7 +34,7 @@ def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=None,bb=Tr
     m=b.shape[0]
     d=X.shape[1]
 
-    if tau==None: tau= 1/( 1.0/t + np.max(b)/(t-1.0) ) # inverse of the approximated Lipschitz constant
+    if tau==None: tau= 1. # inverse of the approximated Lipschitz constant
 
     f, g, Z, P, niter, errP, errG, obj = w2extrapolation.extrapolation.extra_fortran(n,m,d,a,b,X,Y,f0,Z0,t,eps,deb,itmax,tol,tau,bb,verb) 
     mu=(Z,b)
@@ -84,7 +84,7 @@ def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=No
     m=b.shape[0]
     d=Y.shape[1]
 
-    if tau==None: tau= 1/( 1.0/t + np.max(b)/(t-1.0) ) # inverse of the approximated Lipschitz constant
+    if tau==None: tau= 1. # inverse of the approximated Lipschitz constant
     
     a_all=np.zeros((nb,Nm))
     f0all=np.zeros((nb,Nm))
