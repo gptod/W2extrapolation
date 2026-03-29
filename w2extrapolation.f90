@@ -66,12 +66,12 @@ subroutine extra_fortran(n,m,d,mu,nu,X,Y,f0,Z0,t,eps,deb,itmax,tol,tau,bb,verb,f
             obj_self=0.0_wp
         end if
         grad=grad+grad_self/t
-        errG(i) = sum(grad**2)
+        errG(i) = sqrt(sum(grad**2))
 
         if (bb) then
             ! Barzilai-Borwein method
             do l=1,d
-                grad(:,l)=grad(:,l)/ (nu/(t*t-t))
+                grad(:,l)=grad(:,l)/(nu/(t*t-t))
             end do
             if (i>1) then 
                 call bb_stepsize(m,d,Z,Zprev,grad,gradprev,i,tau)
@@ -185,7 +185,7 @@ subroutine extra_nto1_fortran(Nm,nb,n,m,d,mu,nu,X,Y,f0,Z0,t,lm,eps,deb,itmax,tol
             errP(i)=errP(i)+errP_k(k)
             obj_kk=obj_kk+obj_k(k)
         end do
-        errG(i) = sum(grad**2)
+        errG(i) = sqrt(sum(grad**2))
 
         if (bb) then
             ! Barzilai-Borwein method
