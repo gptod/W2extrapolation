@@ -43,14 +43,14 @@ for i in range(1,Nt+1):
     if i==1:
         f0=tuple([np.ones(num[k][0].shape[0]) for k in range(Nm)])
         Z0=nup[0]
-    f, g, mu, P, numbar, niter, errP, errG, obj =extra.extra_Nto1(num,nup,f0,Z0,t,lm,eps=eps,deb=True,itmax=itmax,tol=tol,verb=0,bb=True)
+    f, g, Z, P, niter, errP, errG, obj =extra.extra_Nto1(num,nup,f0,Z0,t,lm,eps=eps,deb=False,itmax=itmax,tol=tol,verb=0,bb=True)
 
     print('iterations:',niter,'err.marg.:',errP[niter-1],'err.grad.:',errG[niter-1])
     if max(errP[niter-1],errG[niter-1])>tol:
         print('Warning: ','t=',f"{t:1.4}",'error bigger than tolerance')
-    extrapolations[f"{t:1.4}"]=(mu,errP[niter-1],errG[niter-1])
+    extrapolations[f"{t:1.4}"]=((Z,nup[1]),errP[niter-1],errG[niter-1])
     f0=f
-    Z0=mu[0]
+    Z0=Z
 
 
 stop = timeit.default_timer()

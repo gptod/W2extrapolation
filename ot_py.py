@@ -3,8 +3,8 @@ import ot_sinkhorn
 
 def ot(mu,nu,cost=ot_sinkhorn.ot_sinkhorn.cost_l2,eps=1e-3,itmax=10000,tol=5e-4,verb=0):
 
-    X,a=mu[0],mu[1]
-    Y,b=nu[0],nu[1]
+    X,a = mu
+    Y,b = nu
     n=a.shape[0]
     m=b.shape[0]
     d=X.shape[1]
@@ -19,7 +19,7 @@ def ot(mu,nu,cost=ot_sinkhorn.ot_sinkhorn.cost_l2,eps=1e-3,itmax=10000,tol=5e-4,
 
 def ot_self(mu,cost=ot_sinkhorn.ot_sinkhorn.cost_l2,eps=1e-3,itmax=10000,tol=5e-4,verb=0):
 
-    X,a=mu[0],mu[1]
+    X,a=mu
     n=a.shape[0]
     d=X.shape[1]
     C=cost(n,n,d,X,X)
@@ -32,8 +32,14 @@ def ot_self(mu,cost=ot_sinkhorn.ot_sinkhorn.cost_l2,eps=1e-3,itmax=10000,tol=5e-
 
 def Sdiv(mu,nu,cost=ot_sinkhorn.ot_sinkhorn.cost_l2,eps=1e-3,itmax=10000,tol=5e-4,verb=0):
 
-    _,_,_,_,_,res12 =ot(mu,nu,cost=cost,eps=eps,itmax=itmax,tol=tol,verb=verb)
-    _,_,_,_,res11 =ot_self(mu,cost=cost,eps=eps,itmax=itmax,tol=tol,verb=verb)
-    _,_,_,_,res22 =ot_self(nu,cost=cost,eps=eps,itmax=itmax,tol=tol,verb=verb)
+    _,_,P,_,_,res12 =ot(mu,nu,cost=cost,eps=eps,itmax=itmax,tol=tol,verb=verb)
+    _,Pmu,_,_,res11 =ot_self(mu,cost=cost,eps=eps,itmax=itmax,tol=tol,verb=verb)
+    _,Pnu,_,_,res22 =ot_self(nu,cost=cost,eps=eps,itmax=itmax,tol=tol,verb=verb)
 
-    return res12[-1]-0.5*res11-0.5*res22
+    X, a = mu
+    Y, b = nu
+    grad = ((P.T@X).T/b).T + (Y- ((Pnu@Y).T/b).T)
+    
+    return res12[-1]-0.5*res11-0.5*res22, grad
+
+

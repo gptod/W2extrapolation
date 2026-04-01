@@ -49,14 +49,14 @@ for ind in couples:
         if i==1:
             f0=np.ones(np.size(X,0))
             Z0=Y
-        f, g, mu, P, nu0bar, niter, errP, errG, obj =extra.extra((X,a),(Y,b),f0,Z0,t,eps=eps,deb=True,itmax=itmax,tol=tol,verb=0,bb=True)
+        f, g, Z, P, niter, errP, errG, obj =extra.extra((X,a),(Y,b),f0,Z0,t,eps=eps,deb=False,itmax=itmax,tol=tol,verb=0,bb=True)
 
         print(ind[0]+'2'+ind[1],'iterations:',niter,'err.marg.:',errP[niter-1],'err.grad.:',errG[niter-1])
         if max(errP[niter-1],errG[niter-1])>tol:
             print('Warning: ',ind[0]+'2'+ind[1],'t=',f"{t:1.4}",'error bigger than tolerance')
-        extra_i[f"{t:1.4}"]=(mu,errP[niter-1],errG[niter-1])
+        extra_i[f"{t:1.4}"]=((Z,b),errP[niter-1],errG[niter-1])
         f0=f
-        Z0=mu[0]
+        Z0=Z
 
     extrapolations[ind[0]+'2'+ind[1]]=extra_i
 

@@ -1,8 +1,7 @@
 import numpy as np
 import w2extrapolation
 
-def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=None,bb=True,verb=0):
-
+def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,  itmax=10000,tol=5e-4,tau=None,bb = True,verb=0):
     # input:
     # nu0 -> initial measure; tuple containing two numpy arrays, X the particles' positions of size (n,d) and mu the weights of size n
     # nu1 -> final measure; same structure of nu0
@@ -15,38 +14,30 @@ def extra(nu0,nu1,f0,Z0,t,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=None,bb=Tr
     # itmax -> maximum number of iterations for the SISTA algorithm
     # tol -> tolerance for the error
     # tau -> stepsize for the gradient descent step in the SISTA algorithm
-    # bb -> logical; True for adapative Barzilai–Borwein stepsize or False for constant stepsize tau
+    # bb -> adaptive stepsize
     # verb -> verbosity level: 0 no output, 1 print iterations' details
 
     # output: 
     # f, g -> optimal potentials; numpy arrays of size respextively n and m
-    # mu -> extrapolated discrete measure in the form (Z,b), with Z numpy array of size (m,d) corresponding to particles' position 
-    #       and b numpy array of size m corresponding to the weights (which coincides with those of the measure nu1)
+    # Z -> numpy array of size (m,d) corresponding to particles' position
     # P -> optimal plan in the weak optimal transport barycentric formulation; numpy array of dimension (n,m)
-    # nu0bar -> discrete measure in convex order with nu0, with the same form of mu
     # niter -> number of iterations
     # errP, errG -> arrays of iterations' errors on the marginal condition on the plan P and on the norm of the gradient
     # obj -> array of iterations' objective values
     
-    X,a=nu0[0],nu0[1]
-    Y,b=nu1[0],nu1[1]
+    X,a = nu0
+    Y,b =nu1
     n=a.shape[0]
     m=b.shape[0]
     d=X.shape[1]
-
+    
     if tau==None: tau= 1. # inverse of the approximated Lipschitz constant
-
+    
     f, g, Z, P, niter, errP, errG, obj = w2extrapolation.extrapolation.extra_fortran(n,m,d,a,b,X,Y,f0,Z0,t,eps,deb,itmax,tol,tau,bb,verb) 
-    mu=(Z,b)
-    dt=1/(1-t)
-    Xb=dt*Z+(1-dt)*Y
-    nu0bar=(Xb,b)
-   
-    if min(errP[-1],errG[-1])> tol: print('Warning: error above tolerance. Error:',min(errP[-1],errG[-1]))
 
-    return f, g, mu, P, nu0bar, niter, errP, errG, obj
+    return f, g, Z, P, niter, errP, errG, obj
 
-def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=None,bb=True,verb=0):
+def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,  itmax=10000,tol=5e-4,tau=None,bb = True,verb=0):
 
     # input:
     # num -> initial measures; tuple containing the N measures in the form of tuples (X,a), 
@@ -62,15 +53,12 @@ def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=No
     # itmax -> maximum number of iterations for the SISTA algorithm
     # tol -> tolerance for the error
     # tau -> stepsize for the gradient descent step in the SISTA algorithm
-    # bb -> logical; True for adapative Barzilai–Borwein stepsize or False for constant stepsize tau
     # verb -> verbosity level: 0 no output, 1 print iterations' details
 
     # output: 
     # f, g -> optimal potentials; tuple of length len(num) of numpy arrays of size respextively nk and m
-    # mu -> extrapolated discrete measure in the form (Z,b), with Z numpy array of size (m,d) corresponding to particles' position 
-    #       and b numpy array of size m corresponding to the weights (which coincides with those of the measure nu1)
+    # Z -> numpy array of size (m,d) corresponding to particles' position
     # P -> ptimal plan in the weak optimal transport barycentric formulation; tuple of length len(num) of numpy arrays of dimension (nk,m)
-    # nu0bar -> discrete measure in convex order with nu0, with the same form of mu
     # niter -> number of iterations
     # errP, errG -> arrays of iterations' errors on the marginal condition on the plan P and on the norm of the gradient
     # obj -> array of iterations' objective values
@@ -83,7 +71,7 @@ def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=No
     Y, b=nup[0], nup[1]
     m=b.shape[0]
     d=Y.shape[1]
-
+    
     if tau==None: tau= 1. # inverse of the approximated Lipschitz constant
     
     a_all=np.zeros((nb,Nm))
@@ -99,11 +87,7 @@ def extra_Nto1(num,nup,f0,Z0,t,lm,eps=1e-3,deb=False,itmax=10000,tol=5e-4,tau=No
     fall, g, Z, Pall, niter, errP, errG, obj = w2extrapolation.extrapolation.extra_nto1_fortran(Nm,nb,n,m,d,a_all,b,Xall,Y,f0all,Z0,t,lm,eps,deb,itmax,tol,tau,bb,verb)
     f=tuple( [fall[0:n[k],k] for k in range(Nm)] )
     P=tuple( [Pall[0:n[k],:,k] for k in range(Nm)] )
-    mu=(Z,b)
-    dt=1/(1-t)
-    Xb=dt*Z+(1-dt)*Y
-    numbar=(Xb,b)
 
-    if min(errP[-1],errG[-1])> tol: print('Warning: error above tolerance. Error:',min(errP[-1],errG[-1]))
-    
-    return f, g, mu, P, numbar, niter, errP, errG, obj
+    return f, g, Z, P, niter, errP, errG, obj
+
+
